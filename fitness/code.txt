@@ -1,0 +1,125 @@
+users [icon: user, color: blue] {
+  id serial pk
+  first_name varchar(50) not null
+  last_name varchar(50)
+  email varchar(322) unique not null
+  phone varchar(10) unique
+  address text
+  city varchar(30)
+  pincode varchar(6) not start with "-"
+  dob Date
+  height int greate than 0
+  weight int greter than 0
+  created_at timestamp
+  updated_at timestamp
+}
+
+trainers[color: blue]{
+  id serial pk
+  first_name varchar(50) not null
+  last_name varchar(50)
+  email varchar(322) unique not null
+  phone varchar(10) unique not null
+  address text not null
+  city varchar(30) not null
+  pincode varchar(6) not null not start with "-"
+  dob Date
+  height int greate than 0
+  weight int greter than 0
+  year_experience int greater than equal to 0
+  created_at timestamp
+  updated_at timestamp
+}
+
+plans[icon: package, color: red]{
+  id serial pk
+  name varchar(50) not null
+  amount int not null greater than 0
+  benefits text not null
+  created_at timestamp
+  updated_at timestamp
+}
+trainer_notes[icon: notebook, color: orange]{
+  id serial pk
+  trainer_id id fk
+  diet_plan text
+  workout_plan text
+  created_at timestamp
+  updated_at timestamp
+}
+trainer_feedbacks[color:orange, icon: star]{
+  id serial pk
+  session_id int fk
+  rateing int greater than equal to 0 and less than equal to 5
+  comment text
+  created_at timestamp
+  updated_at timestamp
+}
+
+paid_clients[color: green]{
+  id serial pk
+  user_id int 
+  plan_id int 
+  trainer_id int
+  start_date Date not null
+  end_date Date not null
+  created_at timestamp
+  updated_at timestamp
+}
+sessions[color: yellow]{
+  id serial pk
+  name varchar(50) not null
+  date Date
+  trainer_id int
+  start_time timestamp
+  end_time timestamp
+  group_session boolean default false
+  created_at timestamp
+  updated_at timestamp
+}
+progress[icon: progress]{
+  id serial pk
+  session_id int 
+  paid_client_id int
+  time timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+weekly_taks{
+  id serial pk
+  paid_client_id int
+  task text not null
+  start_date timestamp
+  end_date timestamp
+  weight int 
+  height int
+  waist int
+  isCompleted boolean default false
+  created_at timestamp
+  updated_at timestamp
+}
+payment[icon: dollar-sign, color: red]{
+  id serial pk
+  user_id int fk
+  user_email varchar(322) fk
+  plan_id int fk
+  amount int not null
+  order_id varchar(20) not null
+  transaction_id varchar(20) not null
+  payment_mode varchar(10) not null
+  payment_status enum('pending','fulfill','reject') default pending
+  created_at timestamp
+}
+
+payment.plan_id > plans.id
+payment.user_email - users.email
+payment.user_id > users.id
+trainer_feedbacks.session_id - sessions.id
+progress.paid_client_id - paid_clients.id
+progress.session_id > sessions.id
+weekly_taks.paid_client_id - paid_clients.id
+sessions.trainer_id - trainers.id
+trainer_notes.trainer_id > trainers.id
+paid_clients.user_id > users.id
+paid_clients.trainer_id > trainers.id
+paid_clients.plan_id > plans.id

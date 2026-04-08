@@ -1,0 +1,106 @@
+users [icon: user, color: blue] {
+  id serial pk
+  name varchar(50)
+  email varchar(322) unique not null
+  phone varchar(10) unique not null
+  address text not null
+  city varchar(30) not null
+  pin_code varchar(6) not null
+  dob Date
+  created_at Date
+  update_at Date
+}
+clothe_types[color: green]{
+  id serial pk
+  type varchar(10) unique not null
+  created_at Date
+  update_at Date
+}
+categories [icon: cisco-network-attached-storage, color: orange]{
+  id serial pk
+  category varchar(20) unique not null
+  created_at Date
+  update_at Date
+}
+sub_categories [color: orange]{
+  id serial pk
+  category_id int not null
+  sub_categorie varchar(30) unique not null fk
+  created_at Date
+  update_at Date
+}
+
+products[color: purple]{
+  id serial pk
+  type varchar(10) not null fk
+  category_id int not null fk
+  sub_category_id int not null fk
+  name varchar(30) not null
+  regular_price int not null greater than 0
+  sale_price int check less then regular_price
+  quantity int default 0
+  status enum(out_of_stock, available, limited)
+  description text
+  created_at Date
+  update_at Date
+}
+order_historys{
+  id serial pk
+  product_id int not null fk
+  user_id int not null fk
+  status enum(pending, fullfill, reject) default pending
+  created_at Date
+  update_at Date
+}
+Payment_status[icon: money, color: red]{
+  id serial pk
+  product_id int not null fk
+  user_id int not null fk
+  order_id int not null fk
+  user_email varchar(322) not null fk
+  payment_mode varchar(10) not null
+  amount decimal(4, 2) not null
+  status enum(pending, fullfill, reject)
+  default pending
+  created_at Date
+}
+sipping_status[icon: car]{
+  id serial pk
+  order_id int fk
+  status varchar(20)
+  last_date Date not null
+  created_at Date
+  update_at Date
+}
+Reviews[icon: star]{
+  id serial pk
+  product_id int fk
+  user_id fk
+  description text
+  review int not greater than 5
+  created_at Date
+  update_at Date
+}
+color_sizes{
+  id serial pk
+  product_id int not null
+  size varchar(6) not null
+  color varchar(10) not null
+  created_at Date
+  update_at Date
+}
+
+color_sizes.product_id > products.id
+Reviews.product_id > products.id
+Reviews.user_id > users.id
+sipping_status.order__id > order_historys.id
+Payment_status.user_email > users.email
+Payment_status.product_id > products.id
+Payment_status.user_id > users.id
+Payment_status.order_id - order_historys.id
+order_historys.user_id  > users.id
+order_historys.product_id > products.id
+products.type > clothe_types.id
+products.sub_category_id > sub_categories.id
+products.category_id > categories.id
+sub_categories.category_id > categories.id

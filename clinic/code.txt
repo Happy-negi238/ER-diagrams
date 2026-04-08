@@ -1,0 +1,99 @@
+
+patient[color: blue, icon: user]{
+  id serial pk
+  first_name varchar(50) not null
+  last_name varchar(50)
+  email varchar(322) unique not null
+  phone varchar(10)
+  dob Date
+  created_at timestamp
+  updated_at timestamp
+}
+specialize[icon: prefect, color: red]{
+  id serial pk
+  department varchar(40) unique not null
+  doctor_id int fk
+  created_at timestamp
+  updated_at timestamp
+}
+doctors[color: green, icon: stethoscope]{
+  id serial pk
+  specialize_id int fk
+  first_name varchar(50) not null
+  last_name varchar(50)
+  email varchar(322) unique not null
+  phone varchar(10)
+  dob Date
+  years_experience int greater than and equal to 0
+  description text
+  previous_work text
+  created_at timestamp
+  updated_at timestamp
+}
+appointment[icon: handshake, color: purple]{
+  id serial pk
+  patient_name varchar(50) not null
+  reason varchar(30) not null
+  doctor_id int not null
+  date Date
+  patient_id int fk
+  created_at timestamp
+  updated_at timestamp
+}
+payment[icon: dollar-sign, color: red]{
+  id serial pk
+  consultant_id int fk
+  amount int not null
+  transaction_id varchar(20) not null
+  order_id varchar(20) not null
+  status enum('Pending', 'fullfill', 'reject') not null default Pending
+  created_at timestamp
+  updated_at timestamp
+}
+consultants[color: yellow]{
+  id serial pk
+  appointment_id int not null
+  patient_id int not null
+  reason string
+  amount decimal(3, 2)
+  date Date
+  created_at timestamp
+  updated_at timestamp
+}
+test[icon: test-tube, color: orange]{
+  id serial pk
+  consultant_id int fk
+  test_name varchar(20) not null
+  test_description string not null
+  created_at timestamp
+  updated_at timestamp
+}
+reports[icon: report, color: orange]{
+  id serial pk
+  test_id int fk
+  date Date not null
+  file_url varchar(30)
+  status varchar(20)
+  created_at timestamp
+  updated_at timestamp
+}
+prescription{
+  id serial pk
+  consultant_id int fk
+  concern string
+  note text
+  start_date Date
+  end_date Date 
+  created_at timestamp
+  updated_at timestamp
+}
+
+prescription.consultant_id > consultants.id
+consultants.id < test.consultant_id
+test.id < reports.test_id
+patient.id < consultants.patient_id
+appointment.id - consultants.appointment_id
+doctors.id < appointment.doctor_id
+consultants.id - payment.consultant_id
+doctors.id < specialize.doctor_id
+appointment.patient_id > patient.id
