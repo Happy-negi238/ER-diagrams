@@ -1,0 +1,103 @@
+textSize medium
+visitors [icon: user, color: blue, textSize: medium] {
+  id serial pk
+  full_name string not null
+  last_name string
+  email varchar(322) unique
+  phone_no varchar(10)
+  created_at timestamp
+  updated_at timestamp
+}
+vechicle_categories[icon: car, color: purple, textSize: medium]{
+  id serial pk
+  model string unique not null
+  amount int not null
+  created_at timestamp 
+  updated_at timestamp
+}
+car_visits[color: yellow, textSize: medium]{
+  id serial pk
+  visitor_id int fk
+  vechicle_categories_id fk
+  parking_spot_categories_id fk
+  vechicle_no string not null
+  pass_id string
+  date Date not null
+  created_at timestamp
+}
+parking_spot_categories[color: green, textSize: medium]{
+  id serial pk
+  name string unique not null
+  amount int not null
+  created_at timestamp
+  updated_at timestamp
+}
+parking_zone[color: green, textSize: medium]{
+  id serial pk
+  zone string not null
+  allocate_no int not null
+  amount int not null
+  car_visits_id fk not null
+  parking_spot_category_id int fk not null
+  is_available boolean
+  created_at timestamp
+  updated_at timestamp
+}
+parking_sessions[color: green, textSize: medium]{
+  id serial pk
+  parking_zone_id int fk not null
+  car_visits_id int fk not null
+  duration_amount_id fk not null
+  amount int not null
+  park_in timestamp
+  park_out timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+duration_amount[color: purple, textSize: medium]{
+  id serial pk
+  duration string not null
+  amount int not null
+  created_at timestamp
+  updated_at timestamp
+}
+payment[icon: dollar-sign, color: red, textSize: medium]{
+  id serial pk
+  car_visits_id int fk
+  visitors_id int fk
+  visitor_name string not null
+  parking_zone_id int fk
+  parking_sessions_id int fk
+  amount int not null
+  transactioin_id string not null
+  status enum('pending', 'fullfill', 'reject') default pending
+  created_at timestamp
+  updated_at timestamp
+}
+parking_ticket[icon: ticket, textSize: medium]{
+  id serial pk
+  ticket_id string unique not null
+  visitor_id int fk not null
+  visitor_name string not null
+  duration_amount_id int fk
+  parking_zone_id int fk
+  allocate_no int not null
+  zone string not null
+  created_at timestamp
+}
+
+car_visits.id < parking_zone.car_visits_id: [textSize: medium]
+parking_ticket.parking_zone_id  > parking_zone.id: [textSize: medium]
+parking_ticket.duration_amount_id > duration_amount.id: [textSize: medium]
+parking_ticket.visitor_id > visitors.id: [textSize: medium]
+payment.parking_sessions_id  > parking_sessions.id: [textSize: medium]
+payment.parking_zone_id > parking_zone.id: [textSize: medium]
+payment.visitors_id > visitors.id: [textSize: medium]
+payment.car_visits_id > car_visits.id: [textSize: medium]
+car_visits.id < parking_sessions.car_visits_id: [textSize: medium]
+parking_zone.id < parking_sessions.parking_zone_id: [textSize: medium]
+duration_amount.id < parking_sessions.duration_amount_id: [textSize: medium]
+parking_spot_categories.id < parking_zone.parking_spot_category_id: [textSize: medium]
+car_visits.visitor_id > visitors.id: [textSize: medium]
+car_visits.vechicle_categories_id > vechicle_categories.id: [textSize: medium]
+car_visits.parking_spot_categories_id > parking_spot_categories.id: [textSize: medium]
