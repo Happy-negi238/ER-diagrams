@@ -1,0 +1,120 @@
+owners [icon: users, color: blue] {
+  id serial pk
+  first_name string not null
+  last_name string 
+  email  string unique not null
+  phone_no string unique
+  business_type string
+  address string
+  city string
+  pin_code string
+  invest int not null
+  created_at timestampz
+  updated_at timestampz
+}
+owner_members[icon: users, color: blue]{
+  id serial pk
+  first_name string not null
+  last_name string
+  email string unique not null 
+  phone_no unique not null
+  address string
+  city string
+  pin_code string
+  owner_id int fk
+  created_at timestampz
+  updated_at timestampz
+}
+teams[icon: teams, color: orange]{
+  id serial pk
+  name string unique not null
+  owner_id int fk not null
+  is_banned boolean not null
+  is_new boolean not null
+  created_at timestampz
+  updated_at timestampz
+}
+players[icon: ball, color: orange]{
+  id serial pk
+  first_name string not null
+  last_name string
+  team_id int fk not null
+  jearsey_no int not null
+  is_captain boolean not null
+  is_debut boolean not null
+  created_at timestampz
+  updated_at timestampz
+}
+trophy_wins[icon: trophy, color: purple]{
+  id serial pk
+  team_id int fk not null
+  player_id int fk not null
+  session_id int fk not null
+  created_at timestampz
+  updated_at timestampz
+}
+sessions[icon: monday, color: yellow]{
+  id serial pk
+  team_id int fk
+  start_at timestampz
+  end_at timestampz
+  created_at timestampz
+  updated_at timestampz
+}
+banned_counts[icon: ban, color: red]{
+  id serial pk
+  team_id int fk
+  count int default 0
+  created_at timestampz
+  updated_at timestampz
+}
+sponsors[icon: handshake, color: green]{
+  id serial pk
+  name string unique not null
+  business string not null
+  created_at timestampz
+  updated_at timestampz
+}
+sponsor_team[icon: teams, color: green]{
+  id serial pk
+  team_id int fk not null
+  sponsor_id int fk not null
+  session_id int not null
+  invest int not null
+  created_at timestampz
+  updated_at timestampz
+}
+broadcastors[icon: broadcast, color: yellow]{
+  id serial pk
+  name string
+  session_id int not null
+  invest int not null
+  created_at timestampz
+  updated_at timestampz
+}
+investments[icon: dollar-sign, color: red]{
+  id serial pk
+  broadcast_id fk not null
+  sponsor_team_id fk not null
+  owner_id fk not null
+  amount int not null
+  session_id int not null
+  created_at timestampz
+  updated_at timestampz
+}
+
+owners.id < owner_members.owner_id
+players.teamid > teams.id
+teams.owner_id - owners.id
+banned_counts.team_id > teams.id
+trophy_wins.team_id > teams.id
+trophy_wins.player_id > players.id
+trophy_wins.session_id  - sessions.id
+sessions.team_id > teams.id
+sponsors.id < sponsor_team.sponsor_id
+sponsor_team.team_id  > teams.id
+sponsor_team.session_id - sessions.id
+broadcastors.session_id - sessions.id
+investments.broadcast_id > broadcastors.id
+investments.sponsor_team_id > sponsor_team.id
+investments.owner_id > owners.id
